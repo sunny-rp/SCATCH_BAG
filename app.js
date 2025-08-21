@@ -7,7 +7,7 @@ const flash = require("connect-flash")
 
 const ownersRouter = require("./routes/ownersRouter.js")
 const usersRouter = require("./routes/usersRouter.js")
-const productRouter = require("./routes/produtsRouters.js")
+const productRouter = require("./routes/productRouter.js")
 const indexRouter = require("./routes/index.js")  
 
 require("dotenv").config();
