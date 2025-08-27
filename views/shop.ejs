@@ -60,13 +60,14 @@
               <!-- Product Image -->
               <div class="w-full h-52 flex items-center justify-center"
                    style="background-color:<%= product.bgcolor || '#f9f9f9' %>">
-                <% if (product.image && product.image.buffer) { %>
+                <% if (product.image) { %>
+                  <!-- Fixed image buffer access and base64 conversion -->
                   <img 
                     class="h-[12rem] object-contain" 
-                    src="data:image/jpeg;base64,<%= product.image.buffer.toString('base64') %>" 
+                    src="data:image/jpeg;base64,<%= product.image.toString('base64') %>" 
                     alt="<%= product.name %>">
                 <% } else { %>
-                  <img class="h-[8rem] opacity-70" src="/images/placeholder.png" alt="No Image">
+                  <img class="h-[8rem] opacity-70" src="/placeholder.jpg" alt="No Image">
                 <% } %>
               </div>
 
@@ -80,11 +81,20 @@
                     <p class="text-sm text-red-500">Discount: <%= product.discount %>%</p>
                   <% } %>
                 </div>
-                <a 
-                  class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-500 text-white hover:bg-blue-600 shadow transition" 
-                  href="/cart/add/<%= product._id %>">
-                  <i class="ri-add-line text-lg"></i>
-                </a>
+                <!-- Added delete button alongside add to cart button -->
+                <div class="flex gap-2">
+                  <button 
+                    onclick="deleteProduct('<%= product._id %>')"
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600 shadow transition" 
+                    title="Delete Product">
+                    <i class="ri-delete-bin-line text-sm"></i>
+                  </button>
+                  <a 
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-500 text-white hover:bg-blue-600 shadow transition" 
+                    href="/cart/add/<%= product._id %>">
+                    <i class="ri-add-line text-lg"></i>
+                  </a>
+                </div>
               </div>
 
             </div>
@@ -97,5 +107,31 @@
   </div>
 
   <%- include('./partials/footer') %>
+
+  <!-- Added JavaScript for delete functionality -->
+  <script>
+    async function deleteProduct(productId) {
+      if (confirm('Are you sure you want to delete this product?')) {
+        try {
+          const response = await fetch(`/products/delete/${productId}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (response.ok) {
+            // Reload the page to show updated product list
+            window.location.reload();
+          } else {
+            alert('Error deleting product. Please try again.');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error deleting product. Please try again.');
+        }
+      }
+    }
+  </script>
 </body>
 </html>
